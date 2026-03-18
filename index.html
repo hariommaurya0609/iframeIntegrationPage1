@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iframe Payment Form - Live Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #1f2937;
+    }
+
+    .app-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .app-header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-header p {
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-header .icon {
+      font-size: 24px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 0;
+    }
+
+    .tab {
+      background: none;
+      border: none;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      position: relative;
+      top: 2px;
+    }
+
+    .tab:hover {
+      color: #4f46e5;
+    }
+
+    .tab.active {
+      color: #4f46e5;
+      border-bottom-color: #4f46e5;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Presets */
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .preset-card {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .preset-card:hover {
+      border-color: #6366f1;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
+    }
+
+    .preset-card.active {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border-color: #6366f1;
+    }
+
+    .preset-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .preset-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .preset-desc {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-family: "Fira Code", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      background: #f9fafb;
+      resize: vertical;
+      min-height: 400px;
+      transition: all 0.2s;
+    }
+
+    .textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .checkbox-group:hover {
+      background: #f3f4f6;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button.secondary {
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
+
+    .button.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Info boxes */
+    .info-box {
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .info-box.success {
+      background: #d1fae5;
+      border-left-color: #10b981;
+    }
+
+    .info-box.warning {
+      background: #fef3c7;
+      border-left-color: #f59e0b;
+    }
+
+    .info-box strong {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Iframe container */
+    .iframe-container {
+      border: 3px solid #e5e7eb;
+      border-radius: 12px;
+      background: white;
+      height: 600px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .iframe-container::before {
+      content: "Live Preview";
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(99, 102, 241, 0.9);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
+    /* Token display */
+    .token-display {
+      background: #f9fafb;
+      border: 2px dashed #d1d5db;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 20px;
+      font-family: "Fira Code", monospace;
+      font-size: 13px;
+      word-break: break-all;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+    }
+
+    .token-display.has-token {
+      background: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    /* Code snippet */
+    .code-snippet {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 10px;
+      font-family: "Fira Code", monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    .code-snippet code {
+      color: #10b981;
+    }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #6366f1;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+  </style>
+  <body>
+    <div class="app-header">
+      <h1>🎨 Payment Form Designer</h1>
+      <p>Create beautiful, customizable payment forms with live preview</p>
+    </div>
+
+    <div class="container">
+      <!-- Control Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2><span class="icon">⚙️</span> Configuration</h2>
+        </div>
+        <div class="panel-body">
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab active" onclick="switchTab('presets')">
+              🎨 Presets
+            </button>
+            <button class="tab" onclick="switchTab('custom')">✏️ Custom</button>
+            <button class="tab" onclick="switchTab('docs')">📖 Docs</button>
+          </div>
+
+          <!-- Presets Tab -->
+          <div id="presets-tab" class="tab-content active">
+            <div class="info-box">
+              <strong>Quick Start</strong>
+              Choose a preset below to instantly style your form
+            </div>
+
+            <div class="presets-grid">
+              <div class="preset-card" onclick="loadPreset('modern-card')">
+                <div class="preset-icon">💳</div>
+                <div class="preset-name">Modern Card</div>
+                <div class="preset-desc">Clean & minimal</div>
+              </div>
+              <div class="preset-card" onclick="loadPreset('modern-ach')">
+                <div class="preset-icon">🏦</div>
+                <div class="preset-name">Modern ACH</div>
+                <div class="preset-desc">Bank transfer</div>
+              </div>
+              <div class="preset-card" onclick="loadPreset('gradient-card')">
+                <div class="preset-icon">🌈</div>
+                <div class="preset-name">Gradient Card</div>
+                <div class="preset-desc">Colorful style</div>
+              </div>
+              <div class="preset-card" onclick="loadPreset('dark-card')">
+                <div class="preset-icon">🌙</div>
+                <div class="preset-name">Dark Card</div>
+                <div class="preset-desc">Dark theme</div>
+              </div>
+              <div class="preset-card" onclick="loadPreset('minimal-card')">
+                <div class="preset-icon">✨</div>
+                <div class="preset-name">Minimal Card</div>
+                <div class="preset-desc">Simple & clean</div>
+              </div>
+              <div class="preset-card" onclick="loadPreset('professional-ach')">
+                <div class="preset-icon">💼</div>
+                <div class="preset-name">Pro ACH</div>
+                <div class="preset-desc">Enterprise look</div>
+              </div>
+            </div>
+
+            <div class="info-box success">
+              <strong>✓ Real-time Updates</strong>
+              All changes apply instantly without page reload
+            </div>
+          </div>
+
+          <!-- Custom Tab -->
+          <div id="custom-tab" class="tab-content">
+            <div class="info-box warning">
+              <strong>Advanced Mode</strong>
+              Edit JSON configuration directly
+            </div>
+
+            <div class="form-group">
+              <label class="label">Configuration JSON</label>
+              <textarea id="configInput" class="textarea"></textarea>
+            </div>
+
+            <div class="button-group">
+              <button class="button success" onclick="applyConfig()">
+                <span>✓</span> Apply Config
+              </button>
+              <button class="button secondary" onclick="formatJson()">
+                <span>📋</span> Format JSON
+              </button>
+              <button class="button secondary" onclick="copyConfig()">
+                <span>📄</span> Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- Docs Tab -->
+          <div id="docs-tab" class="tab-content">
+            <div class="info-box">
+              <strong>Configuration Options</strong>
+              Available config properties for customization
+            </div>
+
+            <h3 style="margin: 20px 0 12px; font-size: 16px">
+              Card Form Options
+            </h3>
+            <div class="code-snippet">
+              <code>usecvv</code>: "true" | "false" <code>useexpiry</code>:
+              "true" | "false" <code>cardlabel</code>: "Label text"
+              <code>placeholder</code>: "Placeholder text"
+              <code>placeholdercvv</code>: "CVV placeholder"
+              <code>placeholdermonth</code>: "MM" <code>placeholderyear</code>:
+              "YYYY"
+            </div>
+
+            <h3 style="margin: 20px 0 12px; font-size: 16px">
+              ACH Form Options
+            </h3>
+            <div class="code-snippet">
+              <code>useseparateachfields</code>: "true"
+              <code>achroutinglabel</code>: "Routing Number"
+              <code>achroutingplaceholder</code>: "9 digits"
+              <code>achaccountlabel</code>: "Account Number"
+              <code>achaccountplaceholder</code>: "Account #"
+            </div>
+
+            <h3 style="margin: 20px 0 12px; font-size: 16px">CSS Styling</h3>
+            <div class="code-snippet">
+              <code>css</code>: "/* Your custom CSS */"
+            </div>
+
+            <h3 style="margin: 20px 0 12px; font-size: 16px">
+              Builder Pattern API
+            </h3>
+            <div class="code-snippet">
+              createIframe("config-guid") .config({ /* config object */ })
+              .tokenfieldName("token") .iframeDivId("iframe-tokenizer")
+              .render(); // returns Promise
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2><span class="icon">👁️</span> Live Preview</h2>
+          <button
+            class="button"
+            onclick="refreshIframe()"
+            style="padding: 8px 16px; font-size: 12px"
+          >
+            🔄 Refresh
+          </button>
+        </div>
+        <div class="panel-body">
+          <div id="iframe-tokenizer" class="iframe-container"></div>
+
+          <div class="token-display" id="tokenDisplay">
+            No token generated yet
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-value" id="updateCount">0</span>
+              <span class="stat-label">Config Updates</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" id="tokenCount">0</span>
+              <span class="stat-label">Tokens Generated</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value" id="currentMode">Card</span>
+              <span class="stat-label">Current Mode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <input type="hidden" name="mytoken" id="mytoken" />
+
+    <!--
+      IMPORTANT: Replace the config GUID in createIframe() calls below with
+      a GUID that has this page's domain registered in the CardPointe portal.
+      Example: createIframe("f506eeb3-ab4b-4864-a8a8-49ba17072042")
+
+      For local testing ensure the server has a config entry for "localhost"
+      or use a /etc/hosts alias mapped to a registered domain.
+    -->
+    <script src="http://localhost:8060/cardpointe-checkout.js"></script>
+    <script>
+      // ---------------------------------------------------------------------------
+      // Derive the iframe server origin from the loaded script tag.
+      // This is used to validate event.origin on incoming postMessage events so
+      // this page only reacts to messages from the trusted iframe service.
+      // ---------------------------------------------------------------------------
+      var _cpScriptEl = document.querySelector(
+        'script[src*="cardpointe-checkout"]',
+      );
+      var IFRAME_ORIGIN = _cpScriptEl ? new URL(_cpScriptEl.src).origin : null;
+
+      // Replace with a config GUID that has THIS page's domain registered.
+      var CONFIG_GUID = "f506eeb3-ab4b-4864-a8a8-49ba17072042";
+
+      var iframeBuilder = null;
+      var updateCount = 0;
+      var tokenCount = 0;
+      var currentPreset = "modern-card";
+
+      // Presets configuration
+      const presets = {
+        "modern-card": {
+          name: "Modern Card",
+          mode: "Card",
+          config: {
+            cardlabel: "Card Number",
+            placeholder: "1234 5678 9012 3456",
+            usecvv: "true",
+            useexpiry: "true",
+            placeholdercvv: "CVV",
+            cvvlabel: "Security Code",
+            placeholdermonth: "MM",
+            placeholderyear: "YYYY",
+            expirylabel: "Expiry Date",
+            useseparateachfields: "false",
+            css: `
+              input {
+                width: 100%;
+                padding: 14px 18px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                background: white;
+                box-sizing: border-box;
+              }
+              input:focus {
+                outline: none;
+                border-color: #6366f1;
+                box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+                transform: translateY(-1px);
+              }
+              input::placeholder {
+                color: #9ca3af;
+              }
+              label {
+                display: block;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 8px;
+                font-size: 14px;
+                letter-spacing: 0.3px;
+              }
+              form {
+                padding: 32px;
+                background: #fafafa;
+                border-radius: 12px;
+              }
+              form > label {
+                display: inline-block;
+                margin-top: 16px;
+              }
+              form > label:first-child {
+                margin-top: 0;
+              }
+              br {
+                display: none;
+              }
+            `,
+          },
+        },
+        "modern-ach": {
+          name: "Modern ACH",
+          mode: "ACH",
+          config: {
+            useseparateachfields: "true",
+            achroutinglabel: "Bank Routing Number",
+            achroutingplaceholder: "Enter 9-digit routing number",
+            achaccountlabel: "Account Number",
+            achaccountplaceholder: "Enter your account number",
+            css: `
+              input {
+                width: 100%;
+                padding: 14px 18px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                background: white;
+                font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+                letter-spacing: 0.5px;
+                box-sizing: border-box;
+              }
+              input:focus {
+                outline: none;
+                border-color: #10b981;
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+              }
+              label {
+                display: block;
+                font-weight: 600;
+                color: #065f46;
+                margin-bottom: 8px;
+                font-size: 14px;
+              }
+              form {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+                padding: 32px;
+                background: #f0fdf4;
+                border-radius: 12px;
+              }
+            `,
+          },
+        },
+        "gradient-card": {
+          name: "Gradient Card",
+          mode: "Card",
+          config: {
+            cardlabel: "Card Number",
+            placeholder: "•••• •••• •••• ••••",
+            usecvv: "true",
+            useexpiry: "true",
+            placeholdercvv: "•••",
+            cvvlabel: "CVV",
+            placeholdermonth: "MM",
+            placeholderyear: "YY",
+            expirylabel: "Expiry",
+            useseparateachfields: "false",
+            css: `
+              input {
+                width: 100%;
+                padding: 16px 20px;
+                border: 3px solid transparent;
+                border-radius: 12px;
+                font-size: 17px;
+                font-weight: 600;
+                background: linear-gradient(white, white) padding-box,
+                           linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+                transition: all 0.3s ease;
+                box-sizing: border-box;
+              }
+              input:focus {
+                outline: none;
+                box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+                transform: translateY(-2px);
+              }
+              label {
+                display: block;
+                font-weight: 700;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 10px;
+                font-size: 15px;
+              }
+              form {
+                padding: 40px;
+                background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+              }
+              form > label {
+                display: inline-block;
+                margin-top: 20px;
+              }
+              form > label:first-child {
+                margin-top: 0;
+              }
+              br {
+                display: none;
+              }
+            `,
+          },
+        },
+        "dark-card": {
+          name: "Dark Card",
+          mode: "Card",
+          config: {
+            cardlabel: "Card Number",
+            placeholder: "Enter card number",
+            usecvv: "true",
+            useexpiry: "true",
+            placeholdercvv: "CVV",
+            cvvlabel: "Security Code",
+            placeholdermonth: "Month",
+            placeholderyear: "Year",
+            expirylabel: "Expiration",
+            useseparateachfields: "false",
+            css: `
+              input {
+                width: 100%;
+                padding: 16px 20px;
+                border: 2px solid #374151;
+                border-radius: 10px;
+                font-size: 16px;
+                background: #1f2937;
+                color: #f9fafb;
+                transition: all 0.3s ease;
+                box-sizing: border-box;
+              }
+              input:focus {
+                outline: none;
+                border-color: #8b5cf6;
+                box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+                background: #111827;
+              }
+              input::placeholder {
+                color: #6b7280;
+              }
+              label {
+                display: block;
+                font-weight: 600;
+                color: #e5e7eb;
+                margin-bottom: 10px;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              }
+              form {
+                padding: 36px;
+                background: #111827;
+                border: 1px solid #374151;
+                border-radius: 12px;
+              }
+              form > label {
+                display: inline-block;
+                margin-top: 18px;
+              }
+              form > label:first-child {
+                margin-top: 0;
+              }
+              br {
+                display: none;
+              }
+            `,
+          },
+        },
+        "minimal-card": {
+          name: "Minimal Card",
+          mode: "Card",
+          config: {
+            cardlabel: "Card Number",
+            placeholder: "Card number",
+            usecvv: "true",
+            useexpiry: "true",
+            placeholdercvv: "CVV",
+            cvvlabel: "CVV",
+            placeholdermonth: "MM",
+            placeholderyear: "YYYY",
+            expirylabel: "Expires",
+            useseparateachfields: "false",
+            css: `
+              input {
+                width: 100%;
+                padding: 12px 0;
+                border: none;
+                border-bottom: 2px solid #d1d5db;
+                font-size: 16px;
+                background: transparent;
+                transition: border-color 0.2s;
+                box-sizing: border-box;
+              }
+              input:focus {
+                outline: none;
+                border-bottom-color: #000;
+              }
+              input::placeholder {
+                color: #9ca3af;
+              }
+              label {
+                display: block;
+                font-weight: 600;
+                color: #000;
+                margin-bottom: 8px;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              }
+              form {
+                padding: 40px;
+                background: white;
+              }
+              form > label {
+                display: inline-block;
+                margin-top: 24px;
+              }
+              form > label:first-child {
+                margin-top: 0;
+              }
+              br {
+                display: none;
+              }
+            `,
+          },
+        },
+        "professional-ach": {
+          name: "Professional ACH",
+          mode: "ACH",
+          config: {
+            useseparateachfields: "true",
+            achroutinglabel: "Routing Number (ABA)",
+            achroutingplaceholder: "000000000",
+            achaccountlabel: "Account Number",
+            achaccountplaceholder: "Enter account number",
+            css: `
+              input {
+                width: 100%;
+                padding: 16px 20px;
+                border: 2px solid #cbd5e1;
+                border-radius: 8px;
+                font-size: 16px;
+                font-family: 'Courier New', monospace;
+                background: #f8fafc;
+                color: #0f172a;
+                font-weight: 600;
+                letter-spacing: 1px;
+                transition: all 0.2s;
+                box-sizing: border-box;
+              }
+              input:focus {
+                outline: none;
+                border-color: #3b82f6;
+                background: white;
+                box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+              }
+              label {
+                display: block;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 8px;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              }
+              form {
+                display: flex;
+                flex-direction: column;
+                gap: 28px;
+                padding: 36px;
+                background: linear-gradient(to bottom, #ffffff 0%, #f1f5f9 100%);
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+              }
+            `,
+          },
+        },
+      };
+
+      // ---------------------------------------------------------------------------
+      // Listen for messages from the iframe.
+      // Only messages originating from the trusted IFRAME_ORIGIN are processed.
+      // This listener handles UI updates (token display, config acknowledgements).
+      // The hidden-field write is handled by cardpointe-checkout.js internally.
+      // ---------------------------------------------------------------------------
+      window.addEventListener(
+        "message",
+        function (event) {
+          // Security: ignore messages from any origin other than the iframe server.
+          if (IFRAME_ORIGIN && event.origin !== IFRAME_ORIGIN) {
+            return;
+          }
+
+          try {
+            const data =
+              typeof event.data === "string"
+                ? JSON.parse(event.data)
+                : event.data;
+
+            if (data && data.type === "token") {
+              console.log("✓ Received token from iframe:", data);
+
+              const tokenDisplay = document.getElementById("tokenDisplay");
+              tokenDisplay.textContent = data.token
+                ? "Token: " + data.token
+                : "Token generated successfully!";
+              tokenDisplay.classList.add("has-token");
+
+              tokenCount++;
+              document.getElementById("tokenCount").textContent = tokenCount;
+
+              setTimeout(function () {
+                tokenDisplay.classList.remove("has-token");
+                tokenDisplay.textContent = "No token generated yet";
+              }, 5000);
+            }
+
+            if (data && data.type) {
+              switch (data.type) {
+                case "CONFIG_ACCEPTED":
+                  console.log("✓ Configuration accepted by iframe");
+                  break;
+                case "CONFIG_REJECTED":
+                  console.error("❌ Configuration rejected:", data.reason);
+                  break;
+                case "CONFIG_ERROR":
+                  console.error("Configuration error:", data.error);
+                  break;
+              }
+            }
+          } catch (e) {
+            console.error("Error parsing iframe message:", e);
+          }
+        },
+        false,
+      );
+
+      // ---------------------------------------------------------------------------
+      // Tab switching
+      // ---------------------------------------------------------------------------
+      function switchTab(tabName) {
+        document.querySelectorAll(".tab").forEach(function (t) {
+          t.classList.remove("active");
+        });
+        document.querySelectorAll(".tab-content").forEach(function (t) {
+          t.classList.remove("active");
+        });
+
+        event.target.classList.add("active");
+        document.getElementById(tabName + "-tab").classList.add("active");
+      }
+
+      // ---------------------------------------------------------------------------
+      // Load preset
+      // ---------------------------------------------------------------------------
+      function loadPreset(presetKey) {
+        currentPreset = presetKey;
+        const preset = presets[presetKey];
+
+        document.querySelectorAll(".preset-card").forEach(function (card) {
+          card.classList.remove("active");
+        });
+        event.target.closest(".preset-card").classList.add("active");
+
+        document.getElementById("configInput").value = JSON.stringify(
+          preset.config,
+          null,
+          2,
+        );
+        document.getElementById("currentMode").textContent = preset.mode;
+
+        applyConfig();
+      }
+
+      // ---------------------------------------------------------------------------
+      // Send updated config to the iframe via the builder's updateConfig() method.
+      // The builder targets only the validated origin – no wildcard '*' postMessage.
+      // ---------------------------------------------------------------------------
+      function applyConfig() {
+        const configInput = document.getElementById("configInput");
+        let config;
+
+        try {
+          config = JSON.parse(configInput.value);
+        } catch (e) {
+          alert("❌ Invalid JSON: " + e.message);
+          return;
+        }
+
+        if (iframeBuilder) {
+          iframeBuilder.updateConfig(config);
+          updateCount++;
+          document.getElementById("updateCount").textContent = updateCount;
+          console.log("✓ Config update sent");
+        } else {
+          console.warn("⚠️ Iframe builder not initialised yet");
+        }
+      }
+
+      // ---------------------------------------------------------------------------
+      // Refresh – tear down and recreate the iframe with current config.
+      // render() now returns a Promise; domain validation runs again.
+      // ---------------------------------------------------------------------------
+      function refreshIframe() {
+        const configInput = document.getElementById("configInput");
+        let config;
+
+        try {
+          config = JSON.parse(configInput.value);
+        } catch (e) {
+          alert("❌ Invalid JSON: " + e.message);
+          return;
+        }
+
+        // Clear the container before re-creating.
+        const container = document.getElementById("iframe-tokenizer");
+        container.innerHTML = "";
+
+        iframeBuilder = createIframe(CONFIG_GUID)
+          .config(config)
+          .tokenfieldName("mytoken")
+          .iframeDivId("iframe-tokenizer");
+
+        iframeBuilder
+          .render()
+          .then(function () {
+            updateCount++;
+            document.getElementById("updateCount").textContent = updateCount;
+            console.log("✓ Iframe refreshed successfully");
+          })
+          .catch(function (error) {
+            console.error("❌ Error refreshing iframe:", error);
+          });
+      }
+
+      // ---------------------------------------------------------------------------
+      // Format JSON
+      // ---------------------------------------------------------------------------
+      function formatJson() {
+        const configInput = document.getElementById("configInput");
+        try {
+          const config = JSON.parse(configInput.value);
+          configInput.value = JSON.stringify(config, null, 2);
+        } catch (e) {
+          alert("❌ Invalid JSON: " + e.message);
+        }
+      }
+
+      // ---------------------------------------------------------------------------
+      // Copy configuration
+      // ---------------------------------------------------------------------------
+      function copyConfig() {
+        const configInput = document.getElementById("configInput");
+        configInput.select();
+        document.execCommand("copy");
+        alert("✓ Configuration copied to clipboard!");
+      }
+
+      // ---------------------------------------------------------------------------
+      // Initialise on page load.
+      // render() validates the domain with the server before mounting the iframe.
+      // If validation fails an inline error is shown instead of the iframe.
+      // ---------------------------------------------------------------------------
+      window.addEventListener("DOMContentLoaded", function () {
+        const defaultPreset = presets["modern-card"];
+        document.getElementById("configInput").value = JSON.stringify(
+          defaultPreset.config,
+          null,
+          2,
+        );
+        document.getElementById("currentMode").textContent = defaultPreset.mode;
+
+        iframeBuilder = createIframe(CONFIG_GUID)
+          .config(defaultPreset.config)
+          .tokenfieldName("mytoken")
+          .iframeDivId("iframe-tokenizer");
+
+        iframeBuilder
+          .render()
+          .then(function () {
+            document.querySelector(".preset-card").classList.add("active");
+            console.log("🎨 Payment Form Designer initialised");
+          })
+          .catch(function (error) {
+            console.error("❌ Error initialising iframe:", error);
+          });
+      });
+    </script>
+  </body>
+</html>
